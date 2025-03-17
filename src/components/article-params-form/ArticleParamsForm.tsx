@@ -15,35 +15,41 @@ import {
 	ArticleStateType,
 } from 'src/constants/articleProps';
 import { Separator } from 'src/ui/separator';
+import { Text } from 'src/ui/text';
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
+
+type MenuOptionsType = {
+	fontFamilyOption: OptionType;
+	fontSizeOption: OptionType;
+	fontColor: OptionType;
+	backgroundColor: OptionType;
+	contentWidth: OptionType;
+};
 
 type ArticleProps = {
 	applyArticleStyles: (params: ArticleStateType) => void;
 };
 
-export const ArticleParamsForm = (props: ArticleProps) => {
+export const ArticleParamsForm = ({ applyArticleStyles }: ArticleProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const formRef = useRef(null);
-	const menuRef = useRef(null);
+	const menuRef = useRef<HTMLDivElement | null>(null);
 
-	const toggleMenu = () => setIsMenuOpen(prev => !prev);
+	const [menuOptions, setMenuOptions] =
+		useState<MenuOptionsType>(defaultArticleState);
 
-	const [menuOptions, setMenuOptions] = useState({
-		fontFamilyOption: defaultArticleState.fontFamilyOption,
-		fontSizeOption: defaultArticleState.fontSizeOption,
-		fontColor: defaultArticleState.fontColor,
-		backgroundColor: defaultArticleState.backgroundColor,
-		contentWidth: defaultArticleState.contentWidth,
-	});
+	const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-	const updateMenuOptions = (param: string, value: OptionType) => {
-		setMenuOptions(prev => ({ ...prev, [param]: value }));
+	const updateMenuOptions = (
+		param: keyof MenuOptionsType,
+		value: OptionType
+	) => {
+		setMenuOptions((prev) => ({ ...prev, [param]: value }));
 	};
 
 	const resetOptions = () => {
-		setMenuOptions(prev => ({ ...prev, ...defaultArticleState }));
+		setMenuOptions(defaultArticleState);
 	};
 
 	useOutsideClickClose({
@@ -55,7 +61,7 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 
 	const handleSubmit = (event: SyntheticEvent) => {
 		event.preventDefault();
-		props.applyArticleStyles(menuOptions);
+		applyArticleStyles(menuOptions);
 	};
 
 	return (
@@ -66,26 +72,42 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 				className={clsx(styles.container, {
 					[styles.container_open]: isMenuOpen,
 				})}>
-				<form className={styles.form} ref={formRef} onSubmit={handleSubmit}>
+				<form className={styles.form} onSubmit={handleSubmit}>
+					<Text
+						as='h2'
+						dynamic={false}
+						size={31}
+						weight={800}
+						uppercase={true}
+						align='left'
+						family='open-sans'>
+						Задайте параметры
+					</Text>
 					<Select
 						selected={menuOptions.fontFamilyOption}
 						options={fontFamilyOptions}
 						placeholder={defaultArticleState.fontFamilyOption.title}
-						onChange={(selectedValue) => updateMenuOptions('fontFamilyOption', selectedValue)}
+						onChange={(selectedValue) =>
+							updateMenuOptions('fontFamilyOption', selectedValue)
+						}
 						title='Шрифт'
 					/>
 					<RadioGroup
 						name='Размер шрифта'
 						options={fontSizeOptions}
 						selected={menuOptions.fontSizeOption}
-						onChange={(selectedValue) => updateMenuOptions('fontSizeOption', selectedValue)}
+						onChange={(selectedValue) =>
+							updateMenuOptions('fontSizeOption', selectedValue)
+						}
 						title='Размер шрифта'
 					/>
 					<Select
 						selected={menuOptions.fontColor}
 						options={fontColors}
 						placeholder={defaultArticleState.fontColor.title}
-						onChange={(selectedValue) => updateMenuOptions('fontColor', selectedValue)}
+						onChange={(selectedValue) =>
+							updateMenuOptions('fontColor', selectedValue)
+						}
 						title='Цвет шрифта'
 					/>
 					<Separator />
@@ -93,14 +115,18 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 						selected={menuOptions.backgroundColor}
 						options={backgroundColors}
 						placeholder={defaultArticleState.backgroundColor.title}
-						onChange={(selectedValue) => updateMenuOptions('backgroundColor', selectedValue)}
+						onChange={(selectedValue) =>
+							updateMenuOptions('backgroundColor', selectedValue)
+						}
 						title='Цвет фона'
 					/>
 					<Select
 						selected={menuOptions.contentWidth}
 						options={contentWidthArr}
 						placeholder={defaultArticleState.contentWidth.title}
-						onChange={(selectedValue) => updateMenuOptions('contentWidth', selectedValue)}
+						onChange={(selectedValue) =>
+							updateMenuOptions('contentWidth', selectedValue)
+						}
 						title='Ширина контента'
 					/>
 					<div className={styles.bottomContainer}>
@@ -110,7 +136,7 @@ export const ArticleParamsForm = (props: ArticleProps) => {
 							type='clear'
 							onClick={() => {
 								resetOptions();
-								props.applyArticleStyles(defaultArticleState);
+								applyArticleStyles(defaultArticleState);
 							}}
 						/>
 						<Button title='Применить' htmlType='submit' type='apply' />

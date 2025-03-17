@@ -1,4 +1,7 @@
-import { defaultArticleState, ArticleStateType } from 'src/constants/articleProps';
+import {
+	defaultArticleState,
+	ArticleStateType,
+} from 'src/constants/articleProps';
 import { useState, CSSProperties } from 'react';
 import './../styles/index.scss';
 import styles from './../styles/index.module.scss';
