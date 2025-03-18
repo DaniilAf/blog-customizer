@@ -37,7 +37,6 @@ export const ArticleParamsForm = ({ applyArticleStyles }: ArticleProps) => {
 		onClose: () => setIsMenuOpen(false),
 	});
 
-	// Обработчики
 	const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
 	const updateMenuOptions = (
