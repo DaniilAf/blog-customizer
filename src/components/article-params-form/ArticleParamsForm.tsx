@@ -11,22 +11,14 @@ import {
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
-	OptionType,
 	ArticleStateType,
+	OptionType,
 } from 'src/constants/articleProps';
 import { Separator } from 'src/ui/separator';
 import { Text } from 'src/ui/text';
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
-
-type MenuOptionsType = {
-	fontFamilyOption: OptionType;
-	fontSizeOption: OptionType;
-	fontColor: OptionType;
-	backgroundColor: OptionType;
-	contentWidth: OptionType;
-};
 
 type ArticleProps = {
 	applyArticleStyles: (params: ArticleStateType) => void;
@@ -35,33 +27,34 @@ type ArticleProps = {
 export const ArticleParamsForm = ({ applyArticleStyles }: ArticleProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
-
 	const [menuOptions, setMenuOptions] =
-		useState<MenuOptionsType>(defaultArticleState);
-
-	const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-
-	const updateMenuOptions = (
-		param: keyof MenuOptionsType,
-		value: OptionType
-	) => {
-		setMenuOptions((prev) => ({ ...prev, [param]: value }));
-	};
-
-	const resetOptions = () => {
-		setMenuOptions(defaultArticleState);
-	};
+		useState<ArticleStateType>(defaultArticleState);
 
 	useOutsideClickClose({
 		rootRef: menuRef,
 		isOpen: isMenuOpen,
 		onChange: setIsMenuOpen,
-		onClose: resetOptions,
+		onClose: () => setIsMenuOpen(false),
 	});
+
+	// Обработчики
+	const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+
+	const updateMenuOptions = (
+		param: keyof ArticleStateType,
+		value: OptionType
+	) => {
+		setMenuOptions((prev) => ({ ...prev, [param]: value }));
+	};
 
 	const handleSubmit = (event: SyntheticEvent) => {
 		event.preventDefault();
 		applyArticleStyles(menuOptions);
+	};
+
+	const handleResetOptions = () => {
+		setMenuOptions(defaultArticleState);
+		applyArticleStyles(defaultArticleState);
 	};
 
 	return (
@@ -134,10 +127,7 @@ export const ArticleParamsForm = ({ applyArticleStyles }: ArticleProps) => {
 							title='Сбросить'
 							htmlType='reset'
 							type='clear'
-							onClick={() => {
-								resetOptions();
-								applyArticleStyles(defaultArticleState);
-							}}
+							onClick={handleResetOptions}
 						/>
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
